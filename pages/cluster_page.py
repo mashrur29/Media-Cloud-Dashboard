@@ -1,0 +1,260 @@
+import streamlit as st
+import plotly.express as px
+from PIL import Image
+import requests
+from io import BytesIO
+from helpers import get_data, group_colors
+import pandas as pd
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+
+data = get_data()
+
+st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
+
+
+
+def get_cluster_data(cluster_name, selected_week):
+    for cluster in data[selected_week]:
+        if cluster['name'] == cluster_name:
+            return cluster
+    return None
+
+
+def create_pie_chart(cluster, selected_groups):
+    all_groups = list(group_colors.keys())
+    if len(selected_groups) == len(cluster["distribution"]):
+        filtered_distribution = cluster["distribution"]
+    else:
+        filtered_distribution = {
+            k: v if k in selected_groups else 0
+            for k, v in cluster["distribution"].items()
+        }
+        other_count = cluster["article_counts"] - sum(filtered_distribution.values())
+        filtered_distribution["Other"] = other_count
+
+    filtered_distribution = {k: v for k, v in filtered_distribution.items() if v > 0}
+
+    labels = [group for group in all_groups if group in filtered_distribution]
+    values = [filtered_distribution[group] for group in labels]
+
+    colors = [group_colors[label] for label in labels]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, marker=dict(colors=colors), sort=False)])
+    fig.update_traces(textinfo='percent+label')
+
+    return fig
+
+
+def display_sample_articles(cluster, selected_groups):
+    filtered_articles = [article for article in cluster["articles"] if article["group"] in selected_groups]
+    sampled_articles = filtered_articles[:5]  # Sample 5 articles
+    articles_list = [f"- [{article['title']}]({article['url']}) | {article['group'].title()}" for article in
+                     sampled_articles]
+    return articles_list
+
+
+@st.cache_data
+def fetch_image(url):
+    return Image.open(BytesIO(requests.get(url).content))
+
+
+def display_sample_images(cluster, selected_groups):
+    if "Other" in selected_groups:
+        filtered_articles = [article for article in cluster["articles"] if article["group"] not in selected_groups]
+    else:
+        filtered_articles = [article for article in cluster["articles"] if article["group"] in selected_groups]
+    sampled_articles = filtered_articles[:5]
+    # images_list = [article['url'] for article in sampled_articles]
+
+    images_list = ["https://via.placeholder.com/150"] * (len(selected_groups))
+
+    images = [fetch_image(url) for url in images_list]
+
+    return images
+
+
+def calculate_total_and_percentage(cluster, selected_groups, selected_week):
+    total_articles = sum(c['article_counts'] for c in data[selected_week])
+    selected_articles_count = sum(v for k, v in cluster["distribution"].items() if k in selected_groups)
+    percentage = (selected_articles_count / total_articles) * 100
+    return selected_articles_count, percentage
+
+
+def generate_word_cloud(text):
+    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='gray').generate(text)
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.imshow(wordcloud, interpolation='bilinear')
+    ax.axis('off')
+    return fig
+
+
+
+
+def download_cluster_data_as_csv(cluster, week, selected_groups, is_duplicate=False):
+    articles_data = []
+    for article in cluster["articles"]:
+        if article["group"] in selected_groups:
+            articles_data.append({
+                "Title": article["title"],
+                "Group": article["group"],
+                "URL": article["url"]
+            })
+    df = pd.DataFrame(articles_data)
+    csv = df.to_csv(index=False)
+
+    if is_duplicate:
+        file_name = f"{cluster['name']}_week_{week}_1.csv"
+    else:
+        file_name = f"{cluster['name']}_week_{week}.csv"
+
+    st.download_button(
+        label="Download Data as CSV",
+        data=csv,
+        file_name=file_name,
+        mime="text/csv"
+    )
+
+
+def add_placeholder(): # This adds an empty block. I use this to align both columns.
+    placeholder_button_style = """
+                <style>
+                .placeholder-button {
+                    background-color: #FFFFFF;
+                    color: white;
+                    border: none;
+                    padding: 20px 20px;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    text-align: center;
+                    display: inline-block;
+                }
+                .placeholder-button:hover {
+                    background-color: #FFFFFF;
+                }
+                .placeholder-button:focus {
+                    outline: none;
+                }
+                </style>
+                """
+    st.markdown(placeholder_button_style, unsafe_allow_html=True)
+    placeholder_button_html = f"""
+                <div style='text-align: center;'>
+                    <button class="placeholder-button"></button>
+                </div>
+                """
+    st.markdown(placeholder_button_html, unsafe_allow_html=True)
+
+
+def create_cluster_page():
+    params = st.experimental_get_query_params()
+    selected_week = params.get("week", ["week1"])[0]
+    cluster_index = int(params.get("cluster", [0])[0])
+
+    main_cluster = data[selected_week][cluster_index]
+
+    # st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    # download_cluster_data_as_csv(main_cluster, selected_week)
+    # st.markdown("</div>", unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        cluster_names = [c["name"] for c in data[selected_week]]
+        selected_cluster_name = st.selectbox("Change first cluster:", cluster_names, index=cluster_index)
+        main_cluster = get_cluster_data(selected_cluster_name, selected_week)
+
+        group_options = list(main_cluster["distribution"].keys())
+        selected_groups = st.multiselect("Select collections in the first cluster:", group_options, default=group_options)
+
+        if len(selected_groups) < len(group_options):
+            selected_groups.append("Other")
+
+        if "Other" in selected_groups:
+            selected_groups.remove("Other")
+
+        add_placeholder()
+
+
+
+        st.markdown("---")
+
+        download_cluster_data_as_csv(main_cluster, selected_week, selected_groups)
+
+        total_articles, percentage = calculate_total_and_percentage(main_cluster, selected_groups, selected_week)
+        st.markdown(f"**Percentage:** {percentage:.2f}%")
+        st.markdown(f"**Number of Articles:** {total_articles}")
+
+        pie_chart_placeholder = st.empty()
+        pie_chart = create_pie_chart(main_cluster, selected_groups)
+        pie_chart_placeholder.plotly_chart(pie_chart, use_container_width=True)
+
+        sample_images = display_sample_images(main_cluster, selected_groups)
+        st.markdown("### Top Images")
+        image_columns = st.columns(5)
+        for col, img in zip(image_columns, sample_images):
+            col.image(img, use_column_width=True)
+
+        cluster_text = " ".join(
+            [article["title"] for article in main_cluster["articles"] if article['group'] in selected_groups])
+        wordcloud_placeholder = st.empty()
+        wordcloud_placeholder.pyplot(generate_word_cloud(cluster_text))
+
+        sample_articles = display_sample_articles(main_cluster, selected_groups)
+        st.markdown("### Sample Articles")
+        st.markdown("\n".join(sample_articles))
+
+    with col2:
+        other_cluster_names = [c["name"] for c in data[selected_week]]  # if c["name"] != main_cluster["name"]
+
+        selected_other_cluster_name = st.selectbox("Select second cluster:", other_cluster_names)
+        other_cluster = get_cluster_data(selected_other_cluster_name, selected_week)
+
+        other_group_options = list(other_cluster["distribution"].keys())
+        selected_other_groups = st.multiselect("Select collections in the second cluster:", other_group_options,
+                                               default=other_group_options)
+        if len(selected_other_groups) < len(other_group_options):
+            selected_other_groups.append("Other")
+
+        total_articles, percentage = calculate_total_and_percentage(other_cluster, selected_other_groups, selected_week)
+
+        show_comparison = st.button("Show Comparison")
+
+        if show_comparison:
+            if "Other" in selected_other_groups:
+                selected_other_groups.remove("Other")
+
+
+
+            st.markdown("---")
+
+            if other_cluster == main_cluster:
+                download_cluster_data_as_csv(other_cluster, selected_week, selected_other_groups, is_duplicate=True)
+            else:
+                download_cluster_data_as_csv(other_cluster, selected_week, selected_other_groups)
+
+            st.markdown(f"**Percentage:** {percentage:.2f}%")
+            st.markdown(f"**Number of Articles:** {total_articles}")
+
+            other_pie_chart_placeholder = st.empty()
+            other_pie_chart = create_pie_chart(other_cluster, selected_other_groups)
+            other_pie_chart_placeholder.plotly_chart(other_pie_chart, use_container_width=True)
+
+            other_sample_images = display_sample_images(other_cluster, selected_other_groups)
+            st.markdown("### Top Images")
+            image_columns = st.columns(5)
+            for col, img in zip(image_columns, other_sample_images):
+                col.image(img, use_column_width=True)
+
+            cluster_text = " ".join(
+                [article["title"] for article in other_cluster["articles"] if article['group'] in selected_other_groups])
+            wordcloud_placeholder = st.empty()
+            wordcloud_placeholder.pyplot(generate_word_cloud(cluster_text))
+
+            other_sample_articles = display_sample_articles(other_cluster, selected_other_groups)
+            st.markdown("### Sample Articles")
+            st.markdown("\n".join(other_sample_articles))
+
+create_cluster_page()
