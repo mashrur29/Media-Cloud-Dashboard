@@ -31,7 +31,7 @@ This is the code for Mediacloud's dashboard for analyzing media data related to 
 
 ### Prerequisites
 
-- Python 3.10
+- Python 3.10.14
 - pip (Python package installer)
 
 ### Installation
@@ -51,5 +51,5 @@ This is the code for Mediacloud's dashboard for analyzing media data related to 
 
 1. **Start the Streamlit server for the main application**:
     ```bash
-    streamlit run app.py
+    streamlit run home.py
     ```
