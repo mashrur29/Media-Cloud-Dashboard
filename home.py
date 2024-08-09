@@ -12,6 +12,7 @@ st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
 data = get_data()
 
+base_url = 'http://localhost:8501'
 
 def add_floating_button_pageup():
     floating_button_html = """
@@ -235,7 +236,7 @@ def create_home_page():
         group_id = group.replace(' ', "%20")
         week_id = selected_week.replace(' ', "%20")
 
-        url_group = f'http://localhost:8501/collection_page?week={week_id}&group={group_id}'
+        url_group = f'/collection_page?week={week_id}&group={group_id}'
 
         st.markdown(
             f"<h3>Clusters for <a href={url_group} style='color: {group_colors[group]};'>{group.capitalize()}</a></h3>",
