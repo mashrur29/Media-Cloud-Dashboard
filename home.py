@@ -231,7 +231,7 @@ def create_home_page():
     st.markdown("###")
 
 
-    groups = ["far left", "center left", "center", "center right", "right"]
+    groups = list(group_colors.keys())
     for group in groups:
         group_id = group.replace(' ', "%20")
         week_id = selected_week.replace(' ', "%20")
