@@ -3,7 +3,7 @@ import plotly.express as px
 from PIL import Image
 import requests
 from io import BytesIO
-from helpers import get_data, group_colors
+from helpers import get_data, group_colors, remove_stopwords
 import pandas as pd
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
@@ -159,11 +159,21 @@ def create_cluster_page():
     # download_cluster_data_as_csv(main_cluster, selected_week)
     # st.markdown("</div>", unsafe_allow_html=True)
 
+    st.markdown(
+        "<h1>Compare</h1>",
+        unsafe_allow_html=True
+    )
+
     col1, col2 = st.columns(2)
 
     with col1:
+        st.markdown(
+            "<h2>First Set</h2>",
+            unsafe_allow_html=True
+        )
+
         cluster_names = [c["name"] for c in data[selected_week]]
-        selected_cluster_name = st.selectbox("Change first cluster:", cluster_names, index=cluster_index)
+        selected_cluster_name = st.selectbox("Change first set:", cluster_names, index=cluster_index)
         main_cluster = get_cluster_data(selected_cluster_name, selected_week)
 
         group_options = list(main_cluster["distribution"].keys())
@@ -197,8 +207,9 @@ def create_cluster_page():
         for col, img in zip(image_columns, sample_images):
             col.image(img, use_column_width=True)
 
+        st.markdown("### Top Terms from Headlines")
         cluster_text = " ".join(
-            [article["title"] for article in main_cluster["articles"] if article['group'] in selected_groups])
+            [remove_stopwords(article["title"]) for article in main_cluster["articles"] if article['group'] in selected_groups])
         wordcloud_placeholder = st.empty()
         wordcloud_placeholder.pyplot(generate_word_cloud(cluster_text))
 
@@ -207,9 +218,14 @@ def create_cluster_page():
         st.markdown("\n".join(sample_articles))
 
     with col2:
+        st.markdown(
+            "<h2>Second Set</h2>",
+            unsafe_allow_html=True
+        )
+
         other_cluster_names = [c["name"] for c in data[selected_week]]  # if c["name"] != main_cluster["name"]
 
-        selected_other_cluster_name = st.selectbox("Select second cluster:", other_cluster_names)
+        selected_other_cluster_name = st.selectbox("Select second set:", other_cluster_names)
         other_cluster = get_cluster_data(selected_other_cluster_name, selected_week)
 
         other_group_options = list(other_cluster["distribution"].keys())
@@ -248,8 +264,9 @@ def create_cluster_page():
             for col, img in zip(image_columns, other_sample_images):
                 col.image(img, use_column_width=True)
 
+            st.markdown("### Top Terms from Headlines")
             cluster_text = " ".join(
-                [article["title"] for article in other_cluster["articles"] if article['group'] in selected_other_groups])
+                [remove_stopwords(article["title"]) for article in other_cluster["articles"] if article['group'] in selected_other_groups])
             wordcloud_placeholder = st.empty()
             wordcloud_placeholder.pyplot(generate_word_cloud(cluster_text))
 

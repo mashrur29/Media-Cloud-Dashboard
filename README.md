@@ -46,7 +46,15 @@ This is the code for Mediacloud's dashboard for analyzing media data related to 
     ```bash
     pip install -r requirements.txt
     ```
-   
+
+3. **Install spacy packages** (lines 6-7 in helpers.py): 
+    ```bash
+    nltk.download('stopwords')
+    ```
+   ```bash
+    nltk.download('punkt_tab')
+    ```
+
 ### Running the Program
 
 1. **Start the Streamlit server for the main application**:

@@ -232,20 +232,35 @@ def create_home_page():
 
 
     groups = list(group_colors.keys())
-    for group in groups:
+
+    col1, col2 = st.columns(2)
+
+    for id, group in enumerate(groups):
         group_id = group.replace(' ', "%20")
         week_id = selected_week.replace(' ', "%20")
 
         url_group = f'/collection_page?week={week_id}&group={group_id}'
 
-        st.markdown(
-            f"<h3>Clusters for <a href={url_group} style='color: {group_colors[group]};'>{group.capitalize()}</a></h3>",
-            unsafe_allow_html=True
-        )
+        if id % 2 == 0:
+            with col1:
+                st.markdown(
+                    f"<h4>Clusters for <a href={url_group} style='color: {group_colors[group]};'>{group.capitalize()}</a></h4>",
+                    unsafe_allow_html=True
+                )
 
-        group_treemap = create_group_treemap(group, clusters, total_articles, selected_week, colors)
-        if group_treemap:
-            st.plotly_chart(group_treemap, use_container_width=True)
+                group_treemap = create_group_treemap(group, clusters, total_articles, selected_week, colors)
+                if group_treemap:
+                    st.plotly_chart(group_treemap, use_container_width=True)
+        else:
+            with col2:
+                st.markdown(
+                    f"<h4>Clusters for <a href={url_group} style='color: {group_colors[group]};'>{group.capitalize()}</a></h4>",
+                    unsafe_allow_html=True
+                )
+
+                group_treemap = create_group_treemap(group, clusters, total_articles, selected_week, colors)
+                if group_treemap:
+                    st.plotly_chart(group_treemap, use_container_width=True)
 
 create_home_page()
 
