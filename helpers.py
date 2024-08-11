@@ -1,7 +1,9 @@
-from data.test_data import *
+# from data.test_data import *
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import nltk
+import pandas as pd
+import os
 
 # nltk.download('stopwords')
 # nltk.download('punkt_tab')
@@ -25,7 +27,41 @@ def remove_stopwords(sent):
 
 
 def get_data():
+    keys = [
+        'id',
+        'name',
+        'articles',
+        'mostly_left_summary',
+        'somewhat_left_summary',
+        'center_summary',
+        'somewhat_right_summary',
+        'mostly_right_summary'
+    ]
+
     processed_clusters = {}
+
+    clusters = {}
+
+    base_path_to_all_data = 'data/'
+    json_files = [pos_json for pos_json in os.listdir(base_path_to_all_data) if pos_json.endswith('.jsonl')]
+    json_files.sort()
+
+    for file in json_files:
+
+        json_file = pd.read_json(path_or_buf=f'{base_path_to_all_data}/{file}', lines=True)
+        cur_cluster_name = file.replace('_', ' ').replace('.jsonl', '').replace('data/', '')
+        clusters[cur_cluster_name] = []
+        len_cur_cluster = len(json_file['id'])
+
+
+        for idx in range(len_cur_cluster):
+            cur_item = {}
+
+            for key in keys:
+                cur_item[key] = json_file[key][idx]
+
+            clusters[cur_cluster_name].append(cur_item)
+
 
     for week in clusters:
 
@@ -61,8 +97,9 @@ def get_data():
 
             cluster_week.append(c)
 
+            if idx >= 9:
+                break
+
         processed_clusters[week] = cluster_week
 
     return processed_clusters
-
-print(get_data())
