@@ -85,7 +85,7 @@ def calculate_total_and_percentage(cluster, selected_groups, selected_week):
 
 @st.cache_data
 def generate_word_cloud(text):
-    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='gray').generate(text)
+    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='gray', prefer_horizontal=1.0).generate(text)
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis('off')
@@ -168,7 +168,7 @@ def create_cluster_page():
     # st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown(
-        "<h1>Compare</h1>",
+        "<h1>Compare Clusters</h1>",
         unsafe_allow_html=True
     )
 
@@ -254,7 +254,7 @@ def create_cluster_page():
 
         total_articles, percentage = calculate_total_and_percentage(other_cluster, selected_other_groups, selected_week)
 
-        show_comparison = st.button("Show Comparison")
+        show_comparison = st.button("Compare")
 
         if show_comparison:
             if "Other" in selected_other_groups:
