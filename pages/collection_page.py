@@ -60,6 +60,8 @@ def create_group_treemap(group_name, clusters, is_duplicate=False):
         ))
 
     fig.update_layout(height=700)
+    fig.update_traces(marker=dict(cornerradius=10))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
     return fig
 

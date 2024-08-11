@@ -53,6 +53,17 @@ def display_group_legend():
     st.markdown(legend_html, unsafe_allow_html=True)
 
 
+def display_individual_group_title(group, url_group):
+    legend_html = """
+        <div style='display: flex; justify-content: left; align-items: center; margin-top: 20px;'>
+            <div style='margin-right: 20px;'><b>Clusters for</b></div>
+            <div style='display: flex; flex-wrap: wrap; justify-content: center;'>
+        """
+
+    color = group_colors[group]
+    legend_html += f"<a href='{url_group}' style='background-color: {color}; color: white; padding: 5px 10px; margin: 5px; border-radius: 5px; text-decoration: none;'>{group.replace('%20', ' ').capitalize()}</a>"
+    legend_html += "</div></div>"
+    st.markdown(legend_html, unsafe_allow_html=True)
 
 def display_sample_articles(cluster_name, clusters, group=None):
     cluster = next(c for c in clusters if c["name"] == cluster_name)
@@ -143,6 +154,8 @@ def create_cluster_group_treemap_hierarchical(clusters): # No longer used
     )
 
     fig.update_layout(height=700)
+    fig.update_traces(marker=dict(cornerradius=10))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
     return fig
 
@@ -191,6 +204,8 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
         )
 
         fig.update_layout(height=700)
+        fig.update_traces(marker=dict(cornerradius=10))
+        fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
         return fig
 
@@ -222,6 +237,10 @@ def create_home_page():
         pathbar=dict(visible=True)
     )
     fig.update_layout(height=700)
+    fig.update_traces(marker=dict(cornerradius=10))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+
+
     st.plotly_chart(fig, use_container_width=True)
 
 
