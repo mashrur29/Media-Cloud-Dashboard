@@ -6,6 +6,14 @@ import nltk
 # nltk.download('stopwords')
 # nltk.download('punkt_tab')
 
+group_colors = {
+    "mostly left": "#4E79A7",
+    "somewhat left": "#5FA2CE",
+    "center": "#9467BD",
+    "somewhat right": "#FF9D9A",
+    "mostly right": "#E15759"
+}
+
 def remove_stopwords(sent):
     stop_words = set(stopwords.words('english'))
 

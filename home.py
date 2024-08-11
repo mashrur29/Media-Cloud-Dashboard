@@ -255,13 +255,14 @@ def create_home_page():
 
     groups = list(group_colors.keys())
 
+
     col1, col2 = st.columns(2)
 
     for id, group in enumerate(groups):
         group_id = group.replace(' ', "%20")
         week_id = selected_week.replace(' ', "%20")
 
-        url_group = f'/collection_page?week={week_id}&group={group_id}'
+        url_group = f'/collection_page?week={week_id}&collection={group_id}'
 
         if id % 2 == 0:
             with col1:

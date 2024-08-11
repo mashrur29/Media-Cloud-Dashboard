@@ -382,12 +382,3 @@ clusters = {
         }
     ]
 }
-
-
-group_colors = {
-    "mostly left": "#4E79A7",
-    "somewhat left": "#5FA2CE",
-    "center": "#9467BD",
-    "somewhat right": "#FF9D9A",
-    "mostly right": "#E15759"
-}
