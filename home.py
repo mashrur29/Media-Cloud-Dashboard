@@ -41,7 +41,7 @@ def add_floating_button_pageup():
 def display_group_legend():
     legend_html = """
     <div style='display: flex; justify-content: left; align-items: center; margin-top: 20px;'>
-        <div style='margin-right: 20px;'><b>Each Cluster Encompasses Articles from Five Groups:</b></div>
+        <div style='margin-right: 20px;'><b>Each Cluster Encompasses Articles from Five Media Collections:</b></div>
         <div style='display: flex; flex-wrap: wrap; justify-content: center;'>
     """
     for group, color in group_colors.items():
@@ -180,7 +180,7 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
             group_color_values.append(((group_count / total_articles) * 100))
             group_labels.append(wrap_text(cluster['name']))
             group_full_labels.append(cluster['name'])
-            group_urls.append(f"/cluster_page?week={selected_week}&cluster={i}")
+            group_urls.append(f"/cluster_page?week={selected_week}&cluster={i}&collection={group_name}")
             group_sample_texts.append(display_sample_articles(cluster['name'], clusters))
 
     if group_values:
@@ -191,7 +191,8 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
             textinfo="label+value+text",
             hoverinfo="label+value+text",
             text=group_sample_texts,
-            texttemplate="<b>%{label}</b>",
+            texttemplate="<b><a href='%{customdata}'>%{label}</a></b>",
+            customdata=group_urls,
             textposition="middle center",
             marker=dict(colors=colors, showscale=False),
             textfont=dict(size=18)
@@ -216,6 +217,7 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
 def create_home_page():
     st.title("Media Cloud Election Dashboard")
     st.markdown("### Select a week to view the top clusters for that week:")
+
     selected_week = st.selectbox("Select a week:", list(data.keys()))
     clusters = data[selected_week]
 

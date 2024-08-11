@@ -153,6 +153,12 @@ def create_cluster_page():
     selected_week = params.get("week", ["week1"])[0]
     cluster_index = int(params.get("cluster", [0])[0])
 
+    if params.get("collection"):
+        initial_selected_group = params.get("collection")[0]
+    else:
+        initial_selected_group = None
+
+
     main_cluster = data[selected_week][cluster_index]
 
     # st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
@@ -177,7 +183,12 @@ def create_cluster_page():
         main_cluster = get_cluster_data(selected_cluster_name, selected_week)
 
         group_options = list(main_cluster["distribution"].keys())
-        selected_groups = st.multiselect("Select collections in the first cluster:", group_options, default=group_options)
+        initial_options = group_options
+
+        if initial_selected_group:
+            initial_options = [initial_selected_group]
+
+        selected_groups = st.multiselect("Select collections in the first cluster:", group_options, default=initial_options)
 
         if len(selected_groups) < len(group_options):
             selected_groups.append("Other")
@@ -229,8 +240,13 @@ def create_cluster_page():
         other_cluster = get_cluster_data(selected_other_cluster_name, selected_week)
 
         other_group_options = list(other_cluster["distribution"].keys())
+        initial_other_options = other_group_options
+
+        if initial_selected_group:
+            initial_other_options = [initial_selected_group]
+
         selected_other_groups = st.multiselect("Select collections in the second cluster:", other_group_options,
-                                               default=other_group_options)
+                                               default=initial_other_options)
         if len(selected_other_groups) < len(other_group_options):
             selected_other_groups.append("Other")
 
