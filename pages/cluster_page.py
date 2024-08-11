@@ -50,9 +50,9 @@ def create_pie_chart(cluster, selected_groups):
 
 @st.cache_data
 def display_sample_articles(cluster, selected_groups):
-    filtered_articles = [article for article in cluster["articles"] if article["group"] in selected_groups]
+    filtered_articles = [article for article in cluster["articles"] if article["collection"] in selected_groups]
     sampled_articles = filtered_articles[:5]  # Sample 5 articles
-    articles_list = [f"- [{article['title']}]({article['url']}) | {article['group'].title()}" for article in
+    articles_list = [f"- [{article['title']}]({article['url']}) | {article['collection'].title()}" for article in
                      sampled_articles]
     return articles_list
 
@@ -64,9 +64,9 @@ def fetch_image(url):
 
 def display_sample_images(cluster, selected_groups):
     if "Other" in selected_groups:
-        filtered_articles = [article for article in cluster["articles"] if article["group"] not in selected_groups]
+        filtered_articles = [article for article in cluster["articles"] if article["collection"] not in selected_groups]
     else:
-        filtered_articles = [article for article in cluster["articles"] if article["group"] in selected_groups]
+        filtered_articles = [article for article in cluster["articles"] if article["collection"] in selected_groups]
     sampled_articles = filtered_articles[:5]
     # images_list = [article['url'] for article in sampled_articles]
 
@@ -97,10 +97,10 @@ def generate_word_cloud(text):
 def download_cluster_data_as_csv(cluster, week, selected_groups, is_duplicate=False):
     articles_data = []
     for article in cluster["articles"]:
-        if article["group"] in selected_groups:
+        if article["collection"] in selected_groups:
             articles_data.append({
                 "Title": article["title"],
-                "Group": article["group"],
+                "collection": article["collection"],
                 "URL": article["url"]
             })
     df = pd.DataFrame(articles_data)
@@ -222,7 +222,7 @@ def create_cluster_page():
 
         st.markdown("### Top Terms from Headlines")
         cluster_text = " ".join(
-            [remove_stopwords(article["title"]) for article in main_cluster["articles"] if article['group'] in selected_groups])
+            [remove_stopwords(article["title"]) for article in main_cluster["articles"] if article['collection'] in selected_groups])
         wordcloud_placeholder = st.empty()
         wordcloud_placeholder.pyplot(generate_word_cloud(cluster_text))
 
@@ -284,7 +284,7 @@ def create_cluster_page():
 
             st.markdown("### Top Terms from Headlines")
             cluster_text = " ".join(
-                [remove_stopwords(article["title"]) for article in other_cluster["articles"] if article['group'] in selected_other_groups])
+                [remove_stopwords(article["title"]) for article in other_cluster["articles"] if article['collection'] in selected_other_groups])
             wordcloud_placeholder = st.empty()
             wordcloud_placeholder.pyplot(generate_word_cloud(cluster_text))
 

@@ -69,7 +69,7 @@ def display_sample_articles(cluster_name, clusters, group=None):
     cluster = next(c for c in clusters if c["name"] == cluster_name)
     articles = cluster["articles"]
     if group:
-        articles = [article for article in articles if article["group"] == group]
+        articles = [article for article in articles if article["collection"] == group]
     sampled_articles = random.sample(articles, min(5, len(articles)))
     articles_list = [f"- {article['title']}" for article in sampled_articles]
     return "<br>".join(articles_list)
@@ -173,7 +173,7 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
     group_sample_texts = []
 
     for i, cluster in enumerate(clusters):
-        group_count = sum(1 for article in cluster['articles'] if article['group'] == group_name)
+        group_count = sum(1 for article in cluster['articles'] if article['collection'] == group_name)
         if group_count > 0:
             group_articles.append(group_count)
             group_values.append(group_count)

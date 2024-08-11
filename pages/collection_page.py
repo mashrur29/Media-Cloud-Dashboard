@@ -30,7 +30,7 @@ def print_sample_articles(group_name, clusters, num_samples=5):
         num_articles = len(cluster['articles'])
         count_articles = 0
         for i in range(num_articles):
-            if cluster['articles'][i]['group'] == group_name:
+            if cluster['articles'][i]['collection'] == group_name:
                 articles_list.append(cluster['articles'][i])
                 count_articles = count_articles + 1
             if count_articles >= 5:
@@ -122,7 +122,7 @@ def update_treemap_piechart_curr_week(selected_week, group_name):
 
 def create_collection_page():
     query_params = st.experimental_get_query_params()
-    group_name = query_params.get("group", ["far left"])[0]
+    group_name = query_params.get("collection", ["mostly left"])[0]
     initial_selected_week = query_params.get("week", ["week 1"])[0]
 
     # st.markdown("<h1> Change Group </h1>", unsafe_allow_html=True)

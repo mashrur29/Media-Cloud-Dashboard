@@ -27,27 +27,34 @@ def get_data():
 
         for idx, c in enumerate(clusters[week]):
             c["color"] = colors_list[idx % 10]
+            c['article_counts'] = len(c['articles'])
             c["distribution"] = {}
-            c["distribution"]["far left"] = 0
-            c["distribution"]["center left"] = 0
+            c["distribution"]["mostly left"] = 0
+            c["distribution"]["somewhat left"] = 0
             c["distribution"]["center"] = 0
-            c["distribution"]["center right"] = 0
-            c["distribution"]["right"] = 0
-
+            c["distribution"]["somewhat right"] = 0
+            c["distribution"]["mostly right"] = 0
+            
+            # mostly_left, somewhat_left, center, somewhat_right, mostly_right
+            
             for article in c["articles"]:
-                if article["group"] == "far left":
-                    c["distribution"]["far left"] += 1
-                elif article["group"] == "center left":
-                    c["distribution"]["center left"] += 1
-                elif article["group"] == "center":
+                article["collection"] = article["collection"].replace("_", " ")
+
+                if article["collection"] == "mostly left":
+                    c["distribution"]["mostly left"] += 1
+                elif article["collection"] == "somewhat left":
+                    c["distribution"]["somewhat left"] += 1
+                elif article["collection"] == "center":
                     c["distribution"]["center"] += 1
-                elif article["group"] == "center right":
-                    c["distribution"]["center right"] += 1
+                elif article["collection"] == "somewhat right":
+                    c["distribution"]["somewhat right"] += 1
                 else:
-                    c["distribution"]["right"] += 1
+                    c["distribution"]["mostly right"] += 1
 
             cluster_week.append(c)
 
         processed_clusters[week] = cluster_week
 
     return processed_clusters
+
+print(get_data())
