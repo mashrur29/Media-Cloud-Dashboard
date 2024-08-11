@@ -21,7 +21,7 @@ def get_cluster_data(cluster_name, selected_week):
             return cluster
     return None
 
-
+@st.cache_data
 def create_pie_chart(cluster, selected_groups):
     all_groups = list(group_colors.keys())
     if len(selected_groups) == len(cluster["distribution"]):
@@ -35,18 +35,20 @@ def create_pie_chart(cluster, selected_groups):
         filtered_distribution["Other"] = other_count
 
     filtered_distribution = {k: v for k, v in filtered_distribution.items() if v > 0}
+    filtered_distribution_all = cluster["distribution"]
 
-    labels = [group for group in all_groups if group in filtered_distribution]
-    values = [filtered_distribution[group] for group in labels]
+    labels = [group for group in all_groups if group in filtered_distribution_all]
+    values = [filtered_distribution_all[group] for group in labels]
+    colors = [group_colors[label] if label in filtered_distribution else '#5C6068' for label in labels]
 
-    colors = [group_colors[label] for label in labels]
+    # colors = [group_colors[label] for label in labels]
 
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, marker=dict(colors=colors), sort=False)])
     fig.update_traces(textinfo='percent+label')
 
     return fig
 
-
+@st.cache_data
 def display_sample_articles(cluster, selected_groups):
     filtered_articles = [article for article in cluster["articles"] if article["group"] in selected_groups]
     sampled_articles = filtered_articles[:5]  # Sample 5 articles
@@ -81,7 +83,7 @@ def calculate_total_and_percentage(cluster, selected_groups, selected_week):
     percentage = (selected_articles_count / total_articles) * 100
     return selected_articles_count, percentage
 
-
+@st.cache_data
 def generate_word_cloud(text):
     wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='gray').generate(text)
     fig, ax = plt.subplots(figsize=(10, 5))

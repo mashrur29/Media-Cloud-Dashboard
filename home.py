@@ -245,6 +245,7 @@ def create_home_page():
 
     st.plotly_chart(fig, use_container_width=True)
 
+    st.markdown("---")
 
 
     st.title(f"Top Clusters for {selected_week.title()} Among Different Groups")
