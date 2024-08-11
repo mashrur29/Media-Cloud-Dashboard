@@ -123,7 +123,7 @@ def update_treemap_piechart_curr_week(selected_week, group_name):
 def create_collection_page():
     query_params = st.experimental_get_query_params()
     group_name = query_params.get("collection", ["mostly left"])[0]
-    initial_selected_week = query_params.get("week", ["week 1"])[0]
+    initial_selected_week = query_params.get("week", ["2024-07-08 to 2024-07-14"])[0]
 
     # st.markdown("<h1> Change Group </h1>", unsafe_allow_html=True)
 

@@ -152,8 +152,12 @@ def add_placeholder(): # This adds an empty block. I use this to align both colu
 
 def create_cluster_page():
     params = st.experimental_get_query_params()
-    selected_week = params.get("week", ["week1"])[0]
+    selected_week = params.get("week", ["2024-07-08 to 2024-07-14"])[0]
     cluster_index = int(params.get("cluster", [0])[0])
+
+    if selected_week not in data:
+        st.markdown('Select a valid week!')
+        return
 
     if params.get("collection"):
         initial_selected_group = params.get("collection")[0]
@@ -161,7 +165,7 @@ def create_cluster_page():
         initial_selected_group = None
 
 
-    main_cluster = data[selected_week][cluster_index]
+    # main_cluster = data[selected_week][cluster_index]
 
     # st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     # download_cluster_data_as_csv(main_cluster, selected_week)
@@ -179,6 +183,7 @@ def create_cluster_page():
             "<h2>First Set</h2>",
             unsafe_allow_html=True
         )
+
 
         cluster_names = [c["name"] for c in data[selected_week]]
         selected_cluster_name = st.selectbox("Change first set:", cluster_names, index=cluster_index)
