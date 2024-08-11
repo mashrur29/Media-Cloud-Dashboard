@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-
+import random
 from helpers import get_data, group_colors
 
 data = get_data()
@@ -22,19 +22,40 @@ def wrap_text(text, max_words=3):
     wrapped_text = '<br>'.join([' '.join(words[i:i + max_words]) for i in range(0, len(words), max_words)])
     return wrapped_text
 
+def print_sample_articles(group_name, clusters, num_samples=5):
+    random.seed(random.randint(1, 100))
+    articles_list = []
 
-def create_group_treemap(group_name, clusters, is_duplicate=False):
+    for cluster in clusters:
+        num_articles = len(cluster['articles'])
+        count_articles = 0
+        for i in range(num_articles):
+            if cluster['articles'][i]['group'] == group_name:
+                articles_list.append(cluster['articles'][i])
+                count_articles = count_articles + 1
+            if count_articles >= 5:
+                break
+
+    sampled_articles = random.sample(articles_list, min(num_samples, len(articles_list)))
+
+    for article in sampled_articles:
+        st.markdown(f"- [{article['title']}]({article['url']})")
+
+
+def create_group_treemap(selected_week, group_name, clusters, is_duplicate=False):
     labels = []
     parents = []
     values = []
     colors = [cluster['color'] for cluster in clusters]
+    group_urls = []
 
-    for cluster in clusters:
+    for i, cluster in enumerate(clusters):
         for group, count in cluster['distribution'].items():
             if group == group_name:
                 labels.append(wrap_text(cluster["name"]))
                 parents.append("")
                 values.append(count)
+                group_urls.append(f"/cluster_page?week={selected_week}&cluster={i}&collection={group_name}")
 
     if is_duplicate:
         fig = go.Figure(go.Treemap(
@@ -43,7 +64,8 @@ def create_group_treemap(group_name, clusters, is_duplicate=False):
             values=values,
             marker=dict(colors=colors, showscale=False, line=dict(color='black', width=0.5)),
             hovertemplate='%{label}<br>Articles: %{value}<br>',
-            texttemplate='<b>%{label}</b>',
+            texttemplate="<b><a href='%{customdata}' style='text-decoration: underline;'>%{label}</a></b>",
+            customdata=group_urls,
             textposition='middle center',
             textfont=dict(size=18)
         ))
@@ -54,12 +76,13 @@ def create_group_treemap(group_name, clusters, is_duplicate=False):
             values=values,
             marker=dict(colors=colors, showscale=False, line=dict(color='black', width=0.5)),
             hovertemplate='<b>%{label}</b><br>Articles: %{value}<br>',
-            texttemplate='<b>%{label}</b>',
+            texttemplate="<b><a href='%{customdata}' style='text-decoration: underline;'>%{label}</a></b>",
+            customdata=group_urls,
             textposition='middle center',
             textfont=dict(size=18)
         ))
 
-    fig.update_layout(height=700)
+    fig.update_layout(height=400)
     fig.update_traces(marker=dict(cornerradius=10))
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
@@ -93,7 +116,7 @@ def update_treemap_piechart_curr_week(selected_week, group_name):
     st.plotly_chart(pie_chart, use_container_width=True)
 
     st.markdown(f"### Treemap for this week")
-    group_treemap = create_group_treemap(group_name, clusters)
+    group_treemap = create_group_treemap(selected_week, group_name, clusters)
     st.plotly_chart(group_treemap, use_container_width=True)
 
 
@@ -117,13 +140,22 @@ def create_collection_page():
 
     clusters = data[selected_week]
 
-    st.markdown(f"#### Overall attention for {selected_week}")
-    pie_chart = create_group_pie_chart(group_name, clusters)
-    st.plotly_chart(pie_chart, use_container_width=True)
+    col1, col2 = st.columns(2)
 
-    st.markdown(f"#### Top clusters for {selected_week}")
-    group_treemap = create_group_treemap(group_name, clusters)
-    st.plotly_chart(group_treemap, use_container_width=True, height=600)
+    with col1:
+        st.markdown(f"#### Overall attention for {selected_week}")
+        pie_chart = create_group_pie_chart(group_name, clusters)
+        st.plotly_chart(pie_chart, use_container_width=True)
+
+
+    with col2:
+        st.markdown(f"#### Top clusters for {selected_week}")
+        group_treemap = create_group_treemap(selected_week, group_name, clusters)
+        st.plotly_chart(group_treemap, use_container_width=True)
+
+
+    st.markdown(f"#### Sample articles for {selected_week}")
+    print_sample_articles(group_name, clusters, 5)
 
     st.markdown(
         f"<h1>Historical Attention Over Clusters for All Weeks for <span style='color: {group_colors[group_name]};'>{group_name.title()}</span></h1>",
@@ -134,12 +166,12 @@ def create_collection_page():
         if week != selected_week:
             st.markdown(f"#### {week.replace('%20', ' ').capitalize()}")
             week_clusters = data[week]
-            week_group_treemap = create_group_treemap(group_name, week_clusters)
+            week_group_treemap = create_group_treemap(week, group_name, week_clusters)
             st.plotly_chart(week_group_treemap, use_container_width=True)
         else:
             st.markdown(f"#### {week.replace('%20', ' ').capitalize()} (Selected Week)")
             week_clusters = data[week]
-            week_group_treemap = create_group_treemap(group_name, week_clusters, is_duplicate=True)
+            week_group_treemap = create_group_treemap(week, group_name, week_clusters, is_duplicate=True)
             st.plotly_chart(week_group_treemap, use_container_width=True)
 
 create_collection_page()

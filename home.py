@@ -204,7 +204,7 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
             pathbar=dict(visible=True)
         )
 
-        fig.update_layout(height=700)
+        fig.update_layout(height=500)
         fig.update_traces(marker=dict(cornerradius=10))
         fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
