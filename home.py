@@ -87,7 +87,7 @@ def create_main_treemap(labels, values, colors, urls):
         labels=labels,
         parents=[""] * len(labels),
         values=values,
-        marker=dict(colors=colors, showscale=False),
+        marker=dict(colors=colors, showscale=False, line=dict(color='black', width=0.5)),
         texttemplate="<b><a href='%{customdata}' style='text-decoration: underline;'>%{label}</a></b>",
         textposition="middle center",
         textinfo="label+value+text",
@@ -194,7 +194,7 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
             texttemplate="<b><a href='%{customdata}' style='text-decoration: underline;'>%{label}</a></b>",
             customdata=group_urls,
             textposition="middle center",
-            marker=dict(colors=colors, showscale=False),
+            marker=dict(colors=colors, showscale=False, line=dict(color='black', width=0.5)),
             textfont=dict(size=18)
         ))
 

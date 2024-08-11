@@ -168,7 +168,7 @@ def create_cluster_page():
     # st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown(
-        "<h1>Compare Clusters</h1>",
+        "<h1>Compare Media Coverage</h1>",
         unsafe_allow_html=True
     )
 
