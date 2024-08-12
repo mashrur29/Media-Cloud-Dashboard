@@ -70,7 +70,11 @@ def display_sample_images(cluster, selected_groups):
     sampled_articles = filtered_articles[:5]
     # images_list = [article['url'] for article in sampled_articles]
 
-    images_list = ["https://via.placeholder.com/150"] * (len(selected_groups))
+    images_list = []
+    for group in selected_groups:
+        group_name_dashed = group.replace(' ', '_').strip()
+        img_url = cluster[f'{group_name_dashed}_summary']['image_url']
+        images_list.append(img_url)
 
     images = [fetch_image(url) for url in images_list]
 

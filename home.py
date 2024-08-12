@@ -174,12 +174,17 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
 
     for i, cluster in enumerate(clusters):
         group_count = sum(1 for article in cluster['articles'] if article['collection'] == group_name)
+
         if group_count > 0:
+            group_name_dashed = group_name.replace(' ', '_').strip()
+            cluster_group_headline = cluster[f'{group_name_dashed}_summary']['article']['title']
+
+
             group_articles.append(group_count)
             group_values.append(group_count)
             group_color_values.append(((group_count / total_articles) * 100))
-            group_labels.append(wrap_text(cluster['name']))
-            group_full_labels.append(cluster['name'])
+            group_labels.append(wrap_text(cluster_group_headline))
+            group_full_labels.append(cluster_group_headline)
             group_urls.append(f"/cluster_page?week={selected_week}&cluster={i}&collection={group_name}")
             group_sample_texts.append(display_sample_articles(cluster['name'], clusters))
 

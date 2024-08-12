@@ -52,7 +52,10 @@ def create_group_treemap(selected_week, group_name, clusters, is_duplicate=False
     for i, cluster in enumerate(clusters):
         for group, count in cluster['distribution'].items():
             if group == group_name:
-                labels.append(wrap_text(cluster["name"]))
+                group_name_dashed = group_name.replace(' ', '_').strip()
+                cluster_group_headline = cluster[f'{group_name_dashed}_summary']['article']['title']
+
+                labels.append(wrap_text(cluster_group_headline))
                 parents.append("")
                 values.append(count)
                 group_urls.append(f"/cluster_page?week={selected_week}&cluster={i}&collection={group_name}")
@@ -163,6 +166,9 @@ def create_collection_page():
     )
 
     for week in reversed(list(data.keys())):
+        if week > selected_week:
+            continue
+
         if week != selected_week:
             st.markdown(f"#### {week.replace('%20', ' ').capitalize()}")
             week_clusters = data[week]
