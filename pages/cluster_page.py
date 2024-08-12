@@ -13,7 +13,9 @@ data = get_data()
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
-
+sidebar_logo = 'assets/mediacloud-logo-black-2x.png'
+main_body_logo = 'assets/mediacloud-logo-black-2x.png'
+st.logo(sidebar_logo, icon_image=main_body_logo)
 
 def get_cluster_data(cluster_name, selected_week):
     for cluster in data[selected_week]:

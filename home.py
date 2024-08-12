@@ -14,6 +14,10 @@ data = get_data()
 
 base_url = 'http://localhost:8501'
 
+sidebar_logo = 'assets/mediacloud-logo-black-2x.png'
+main_body_logo = 'assets/mediacloud-logo-black-2x.png'
+st.logo(sidebar_logo, icon_image=main_body_logo)
+
 def add_floating_button_pageup():
     floating_button_html = """
     <style>
