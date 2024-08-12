@@ -82,7 +82,8 @@ def display_sample_images(cluster, selected_groups):
 
 
 def calculate_total_and_percentage(cluster, selected_groups, selected_week):
-    total_articles = sum(c['article_counts'] for c in data[selected_week])
+    # total_articles = sum(c['article_counts'] for c in data[selected_week])
+    total_articles = cluster['mostly_left_summary']['total_num_articles']
     selected_articles_count = sum(v for k, v in cluster["distribution"].items() if k in selected_groups)
     percentage = (selected_articles_count / total_articles) * 100
     return selected_articles_count, percentage
