@@ -93,7 +93,10 @@ def create_group_treemap(selected_week, group_name, clusters, is_duplicate=False
 
 
 def create_group_pie_chart(group_name, clusters):
-    total_articles = sum(cluster['article_counts'] for cluster in clusters)
+    # total_articles = sum(cluster['article_counts'] for cluster in clusters)
+
+
+    total_articles = clusters[0]['mostly_left_summary']['total_num_articles']
     group_articles = sum(
         count for cluster in clusters for group, count in cluster['distribution'].items() if group == group_name)
     other_articles = total_articles - group_articles
