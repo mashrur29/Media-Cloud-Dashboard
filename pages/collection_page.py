@@ -103,7 +103,7 @@ def create_group_pie_chart(group_name, clusters):
         count for cluster in clusters for group, count in cluster['distribution'].items() if group == group_name)
     other_articles = total_articles - group_articles
 
-    colors = [group_colors[group_name], "#5C6068"]
+    colors = [group_colors[group_name], "#D3D3D3"]
 
     fig = go.Figure(go.Pie(
         labels=[f'This group ({group_articles})', f'Other ({other_articles})'],

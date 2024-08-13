@@ -41,7 +41,7 @@ def create_pie_chart(cluster, selected_groups):
 
     labels = [group for group in all_groups if group in filtered_distribution_all]
     values = [filtered_distribution_all[group] for group in labels]
-    colors = [group_colors[label] if label in filtered_distribution else '#5C6068' for label in labels]
+    colors = [group_colors[label] if label in filtered_distribution else '#D3D3D3' for label in labels]
 
     # colors = [group_colors[label] for label in labels]
 
