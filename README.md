@@ -61,3 +61,15 @@ This is the code for Mediacloud's dashboard for analyzing media data related to 
     ```bash
     streamlit run home.py data/
     ```
+
+### Running with Docker
+
+1. **Build the Docker image**: 
+    ```bash
+    docker build -t media_cloud_dashboard .
+    ```
+
+2. **Run the image, passing in the directory your data is stored as a volume**. Supposing your data is stored at `/absolute_path/data` on your local machine, you should mount it to /app/data in the running container: 
+    ```bash
+    docker run -p 8501:8501 --mount type=bind,source=/absolute_path/data,target=/app/data media_cloud_dashboard data/
+    ```
