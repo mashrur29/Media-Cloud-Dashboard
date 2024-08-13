@@ -5,8 +5,8 @@ import nltk
 import pandas as pd
 import os
 
-# nltk.download('stopwords')
-# nltk.download('punkt_tab')
+nltk.download('stopwords')
+nltk.download('punkt_tab')
 
 group_colors = {
     "mostly left": "#4E79A7",
@@ -26,7 +26,7 @@ def remove_stopwords(sent):
 
 
 
-def get_data():
+def get_data(data_path):
     keys = [
         'id',
         'name',
@@ -42,14 +42,14 @@ def get_data():
 
     clusters = {}
 
-    base_path_to_all_data = 'data/'
+    base_path_to_all_data = data_path
     json_files = [pos_json for pos_json in os.listdir(base_path_to_all_data) if pos_json.endswith('.jsonl')]
     json_files.sort()
 
     for file in json_files:
 
         json_file = pd.read_json(path_or_buf=f'{base_path_to_all_data}/{file}', lines=True)
-        cur_cluster_name = file.replace('_', ' ').replace('.jsonl', '').replace('data/', '')
+        cur_cluster_name = file.replace('_', ' ').replace('.jsonl', '').replace(data_path, '')
         clusters[cur_cluster_name] = []
         len_cur_cluster = len(json_file['id'])
 

@@ -8,8 +8,10 @@ import pandas as pd
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import sys
 
-data = get_data()
+args = sys.argv[1:]
+data = get_data(args[0])
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 

@@ -5,12 +5,14 @@ import textwrap
 import plotly.express as px
 import pandas as pd
 import urllib.parse
+import sys
 
 from helpers import get_data, group_colors
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
-data = get_data()
+args = sys.argv[1:]
+data = get_data(args[0])
 
 base_url = 'http://localhost:8501'
 

@@ -3,8 +3,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 import random
 from helpers import get_data, group_colors
+import sys
 
-data = get_data()
+args = sys.argv[1:]
+data = get_data(args[0])
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 
