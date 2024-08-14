@@ -59,7 +59,7 @@ This is the code for Mediacloud's dashboard for analyzing media data related to 
 
 1. **Start the Streamlit server for the main application**:
     ```bash
-    streamlit run home.py data/
+    streamlit run home.py data/ 
     ```
 
 ### Running with Docker
