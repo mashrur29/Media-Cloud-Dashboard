@@ -259,7 +259,7 @@ def create_home_page():
     st.markdown("---")
 
 
-    st.title(f"Top Clusters for {selected_week.title()} Among Different Groups")
+    st.title(f"Top Clusters for {selected_week.title()} Among Different Collections")
     display_group_legend()
     st.markdown("###")
 

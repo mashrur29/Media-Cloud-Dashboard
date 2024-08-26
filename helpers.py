@@ -66,8 +66,8 @@ def get_data(data_path):
     for week in clusters:
 
         cluster_week = []
-        colors_list = ["#C8CFA0", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#DBB5B5", "#D1C4E9", "#E8C5E5", "#D6DAC8",
-                       "#D7CCC8", "#DCEDC8"]
+        colors_list = ["#C8CFA0", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#DBB5B5", "#D1C4E9", "#E8C5E5", "#D6DAC8", "#D7CCC8", "#DCEDC8"]
+        # colors_list = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"]
 
         for idx, c in enumerate(clusters[week]):
             c["color"] = colors_list[idx % 10]
