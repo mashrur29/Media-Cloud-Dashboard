@@ -227,9 +227,17 @@ def create_group_treemap(group_name, clusters, total_articles, selected_week, co
 
 def create_home_page():
     st.title("Media Cloud Election Dashboard")
+    redirect_url = "/dev_view"
+    st.markdown(f'<div class="redirect-button"><a href="{redirect_url}" target="_self">Go to Developer View</a></div>',
+                unsafe_allow_html=True)
+
     st.markdown("### Select a week to view the top clusters for that week:")
 
     selected_week = st.selectbox("Select a week:", list(data.keys()))
+
+    redirect_url = f"/dev_view?week={selected_week}"
+
+
     clusters = data[selected_week]
 
     total_articles = sum(cluster['article_counts'] for cluster in clusters)
